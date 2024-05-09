@@ -1,0 +1,94 @@
+{
+  "intents": [
+      {
+          "tag": "greeting",
+          "patterns": [
+              "Hello",
+              "Hey there",
+              "Hey",
+              "Hi",
+              "Hei",
+              "Good morning",
+              "Good afternoon",
+              "Hey, how are you?",
+              "Good evening!",
+              "Hi, what's up?",
+              "Hello there!",
+              "Morning!"
+          ],
+          "responses": [
+              "Hey! How can I assist you today?",
+              "Hello! What can I do for you?",
+              "Hi there! How can I help you?",
+              "Good day! How may I assist you?",
+              "Greetings! What brings you here?"
+          ]
+      },
+      {
+          "tag": "goodbye",
+          "patterns": [
+              "Goodbye",
+              "See you later",
+              "Take care",
+              "Bye for now",
+              "Catch you later!",
+              "See you soon!",
+              "Until next time!",
+              "Bye bye!",
+              "Take it easy!"
+          ],
+          "responses": [
+              "Goodbye! Have a great day!",
+              "See you later! Take care!",
+              "Take care! Goodbye for now!",
+              "Goodbye! Come back soon!",
+              "Until next time! Farewell!"
+          ]
+      },
+      {
+          "tag": "thanks",
+          "patterns": [
+              "Thank you",
+              "Thanks a lot",
+              "Appreciate it",
+              "Thank you so much!",
+              "I owe you one!",
+              "Thanks a bunch!",
+              "Appreciate your help!",
+              "Big thank you!"
+          ],
+          "responses": [
+              "You're welcome! Happy to assist!",
+              "Glad I could help! Anytime!",
+              "No problem! Let me know if you need anything else!",
+              "You're welcome! Feel free to ask if you need more help!",
+              "Anytime! Let me know if there's anything else I can do!"
+          ]
+      },
+      {
+          "tag": "unknown",
+          "patterns": [
+              "Can you help me?",
+              "I need assistance",
+              "I'm stuck",
+              "help",
+              "assistance",
+              "stuck",
+              "What do you mean?",
+              "I don't understand",
+              "I'm lost, can you guide me?",
+              "This is confusing, help me out.",
+              "Can you explain that in simpler terms?",
+              "I'm completely baffled, what now?",
+              "What am I missing here?"
+          ],
+          "responses": [
+              "I'm here to help. What seems to be the problem?",
+              "Sure, I'll do my best to assist you. What's going on?",
+              "No worries! Let me see if I can help. What do you need?",
+              "I'm sorry, I didn't catch that. Can you please repeat or rephrase?",
+              "It seems like there's some confusion. Can you please clarify?"
+          ]
+      }
+  ]
+}
