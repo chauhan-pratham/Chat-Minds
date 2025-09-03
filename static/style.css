@@ -43,7 +43,9 @@ body.show-chatbot .chatbot-toggler span:last-child {
   position: fixed;
   right: 35px;
   bottom: 90px;
-  width: 420px;
+  /* make width responsive: min 320px, prefers 420px, but never exceed viewport */
+  width: clamp(320px, 40vw, 420px);
+  max-width: 100%;
   background: #fff;
   border-radius: 15px;
   overflow: hidden;
@@ -54,6 +56,8 @@ body.show-chatbot .chatbot-toggler span:last-child {
   box-shadow: 0 0 128px 0 rgba(0,0,0,0.1),
               0 32px 64px -48px rgba(0,0,0,0.5);
   transition: all 0.1s ease;
+  z-index: 9999;
+  max-height: calc(100vh - 60px);
 }
 body.show-chatbot .chatbot {
   opacity: 1;
@@ -81,7 +85,9 @@ header h2 {
 }
 .chatbot .chatbox {
   overflow-y: auto;
-  height: 510px;
+  height: auto;
+  /* leave room for header + input; will grow until this limit, then scroll */
+  max-height: calc(100vh - 180px);
   padding: 30px 20px 100px;
 }
 .chatbot :where(.chatbox, textarea)::-webkit-scrollbar {
@@ -144,6 +150,7 @@ header h2 {
   background: #fff;
   padding: 3px 20px;
   border-top: 1px solid #ddd;
+  z-index: 1; /* above chatbox content */
 }
 .chat-input textarea {
   height: 55px;
