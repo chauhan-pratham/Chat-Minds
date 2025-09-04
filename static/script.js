@@ -7,13 +7,21 @@ const sendChatBtn = document.querySelector(".chat-input span");
 let userMessage = null; // Variable to store user's message
 const inputInitHeight = chatInput.scrollHeight;
 
+// The conflicting linkify() function has been removed.
+
 const createChatLi = (message, className) => {
     // Create a chat <li> element with passed message and className
     const chatLi = document.createElement("li");
     chatLi.classList.add("chat", `${className}`);
-    let chatContent = className === "outgoing" ? `<p></p>` : `<p></p>`; // No need for AI model icon
+    // For incoming chats, add the smart_toy icon
+    let chatContent = className === "outgoing" ? `<p></p>` : `<span class="material-symbols-outlined">smart_toy</span><p></p>`;
     chatLi.innerHTML = chatContent;
-    chatLi.querySelector("p").textContent = message;
+    
+    // Use textContent for user messages to prevent them from injecting their own HTML
+    if (className === "outgoing") {
+        chatLi.querySelector("p").textContent = message;
+    }
+    
     return chatLi; // return chat <li> element
 }
 
@@ -21,7 +29,6 @@ const generateResponse = (chatElement) => {
     const API_URL = "/get"; // Route to Flask server endpoint
     const messageElement = chatElement.querySelector("p");
 
-    // Define the properties and message for the API request
     const requestOptions = {
         method: "POST",
         headers: {
@@ -30,12 +37,16 @@ const generateResponse = (chatElement) => {
         body: `msg=${encodeURIComponent(userMessage)}`
     }
 
-    // Send POST request to Flask server, get response and set the response as paragraph text
+    // Send POST request to Flask server, get response
     fetch(API_URL, requestOptions)
     .then(response => response.json())
     .then(data => {
-        // Set the response from the server as paragraph text
-        messageElement.textContent = data.reply;
+        // ==================================================================
+        // THIS IS THE FINAL, CORRECT LINE
+        // We now directly use innerHTML to render the perfect HTML
+        // that the backend sends us. No other function is needed.
+        // =================================.=================================
+        messageElement.innerHTML = data.reply;
     })
     .catch(() => {
         messageElement.classList.add("error");
@@ -45,7 +56,7 @@ const generateResponse = (chatElement) => {
 }
 
 const handleChat = () => {
-    userMessage = chatInput.value.trim(); // Get user entered message and remove extra whitespace
+    userMessage = chatInput.value.trim(); // Get user entered message
     if(!userMessage) return;
 
     // Clear the input textarea and set its height to default
@@ -57,7 +68,7 @@ const handleChat = () => {
     chatbox.scrollTo(0, chatbox.scrollHeight);
     
     setTimeout(() => {
-        // Display "Thinking..." message while waiting for the response
+        // Display "Thinking..." message and then get the real response
         const incomingChatLi = createChatLi("Thinking...", "incoming");
         chatbox.appendChild(incomingChatLi);
         chatbox.scrollTo(0, chatbox.scrollHeight);
@@ -65,15 +76,14 @@ const handleChat = () => {
     }, 600);
 }
 
+// --- Event Listeners (no changes needed below) ---
+
 chatInput.addEventListener("input", () => {
-    // Adjust the height of the input textarea based on its content
     chatInput.style.height = `${inputInitHeight}px`;
     chatInput.style.height = `${chatInput.scrollHeight}px`;
 });
 
 chatInput.addEventListener("keydown", (e) => {
-    // If Enter key is pressed without Shift key and the window 
-    // width is greater than 800px, handle the chat
     if(e.key === "Enter" && !e.shiftKey && window.innerWidth > 800) {
         e.preventDefault();
         handleChat();
