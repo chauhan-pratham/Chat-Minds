@@ -4,11 +4,15 @@ import random
 import os
 import re
 
-# --- NLTK ---
+# --- NLTK SETUP ---
 import nltk
 from nltk.corpus import stopwords, wordnet
 from nltk.tokenize import word_tokenize
 from nltk.stem import WordNetLemmatizer
+
+# Force NLTK to look inside bundled nltk_data folder
+NLTK_PATH = os.path.join(os.path.dirname(__file__), "nltk_data")
+nltk.data.path.append(NLTK_PATH)
 
 app = Flask(__name__)
 
@@ -17,8 +21,12 @@ INTENTS_FILE = "data/intents.json"
 KNOWLEDGE_BASE_FILE = "data/questions.json"
 
 lemmatizer = WordNetLemmatizer()
-STOP_WORDS = set(stopwords.words("english"))
 
+try:
+    STOP_WORDS = set(stopwords.words("english"))
+except LookupError:
+    print("[FATAL] NLTK stopwords not found. Please run `download_nltk.py` locally before deploying.")
+    STOP_WORDS = set()
 
 # --- FILE LOADING ---
 def load_json_file(file_path):
@@ -56,11 +64,9 @@ def expand_with_wordnet(word):
     synonyms = set([word])
     for syn in wordnet.synsets(word):
         for lemma in syn.lemmas():
-            # normalize each synonym by lemmatizing
             normalized = lemmatizer.lemmatize(lemma.name().lower())
             synonyms.add(normalized)
     return synonyms
-
 
 
 # --- INTENT HANDLING ---
@@ -78,7 +84,6 @@ def search_kb(user_input, kb_data):
     """Search knowledge base for the best matching Q&A."""
     user_tokens = preprocess(user_input)
 
-    # Expand user tokens with WordNet
     expanded_user_tokens = set()
     for token in user_tokens:
         expanded_user_tokens |= expand_with_wordnet(token)
@@ -110,7 +115,6 @@ def classify_and_respond(user_input: str) -> str:
 
     matched_intent = None
 
-    # 1. Check for a matching intent
     if intents_data:
         for intent in intents_data.get("intents", []):
             for pattern in intent.get("patterns", []):
@@ -120,20 +124,17 @@ def classify_and_respond(user_input: str) -> str:
             if matched_intent:
                 break
 
-    # 2. Greeting check
     if matched_intent and matched_intent["tag"] == "greeting" and len(user_input.split()) > 3:
         print("[INFO] Greeting intent matched but input is long → ignoring intent.")
     elif matched_intent:
         print(f"[INFO] Matched intent '{matched_intent['tag']}' with pattern. Responding.")
         return handle_intent(matched_intent["tag"])
 
-    # 3. Search KB
     print("[INFO] No decisive intent, searching KB...")
     kb_match = search_kb(user_input, knowledge_base_data)
     if kb_match:
         return kb_match.get("answer", "I found something relevant, but no answer text provided.")
 
-    # 4. Fallback
     print("[INFO] No match → fallback to 'unknown' intent.")
     return handle_intent("unknown")
 
