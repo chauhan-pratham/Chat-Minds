@@ -10,12 +10,6 @@ from nltk.corpus import stopwords, wordnet
 from nltk.tokenize import word_tokenize
 from nltk.stem import WordNetLemmatizer
 
-# Download required resources (safe to run multiple times)
-nltk.download("punkt")
-nltk.download("punkt_tab")  # required for Python 3.12+ NLTK
-nltk.download("stopwords")
-nltk.download("wordnet")
-
 app = Flask(__name__)
 
 # --- CONFIGURATION ---
