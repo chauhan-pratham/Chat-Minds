@@ -7,45 +7,39 @@ const sendChatBtn = document.querySelector(".chat-input span");
 let userMessage = null; // Variable to store user's message
 const inputInitHeight = chatInput.scrollHeight;
 
-// The conflicting linkify() function has been removed.
+// The conflicting linkify() function has been PERMANENTLY removed.
 
 const createChatLi = (message, className) => {
-    // Create a chat <li> element with passed message and className
     const chatLi = document.createElement("li");
     chatLi.classList.add("chat", `${className}`);
-    // For incoming chats, add the smart_toy icon
     let chatContent = className === "outgoing" ? `<p></p>` : `<span class="material-symbols-outlined">smart_toy</span><p></p>`;
     chatLi.innerHTML = chatContent;
     
-    // Use textContent for user messages to prevent them from injecting their own HTML
+    // Use textContent for user messages for security
     if (className === "outgoing") {
         chatLi.querySelector("p").textContent = message;
     }
     
-    return chatLi; // return chat <li> element
+    return chatLi;
 }
 
 const generateResponse = (chatElement) => {
-    const API_URL = "/get"; // Route to Flask server endpoint
+    const API_URL = "/get";
     const messageElement = chatElement.querySelector("p");
 
     const requestOptions = {
         method: "POST",
-        headers: {
-            "Content-Type": "application/x-www-form-urlencoded",
-        },
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body: `msg=${encodeURIComponent(userMessage)}`
-    }
+    };
 
-    // Send POST request to Flask server, get response
     fetch(API_URL, requestOptions)
     .then(response => response.json())
     .then(data => {
         // ==================================================================
-        // THIS IS THE FINAL, CORRECT LINE
-        // We now directly use innerHTML to render the perfect HTML
-        // that the backend sends us. No other function is needed.
-        // =================================.=================================
+        // FINAL LOGIC: The backend now sends perfect HTML every time.
+        // The frontend's only job is to render it using .innerHTML.
+        // ==================================================================
         messageElement.innerHTML = data.reply;
     })
     .catch(() => {
@@ -56,19 +50,16 @@ const generateResponse = (chatElement) => {
 }
 
 const handleChat = () => {
-    userMessage = chatInput.value.trim(); // Get user entered message
+    userMessage = chatInput.value.trim();
     if(!userMessage) return;
 
-    // Clear the input textarea and set its height to default
     chatInput.value = "";
     chatInput.style.height = `${inputInitHeight}px`;
 
-    // Append the user's message to the chatbox
     chatbox.appendChild(createChatLi(userMessage, "outgoing"));
     chatbox.scrollTo(0, chatbox.scrollHeight);
     
     setTimeout(() => {
-        // Display "Thinking..." message and then get the real response
         const incomingChatLi = createChatLi("Thinking...", "incoming");
         chatbox.appendChild(incomingChatLi);
         chatbox.scrollTo(0, chatbox.scrollHeight);
@@ -76,20 +67,17 @@ const handleChat = () => {
     }, 600);
 }
 
-// --- Event Listeners (no changes needed below) ---
-
+// --- Event Listeners ---
 chatInput.addEventListener("input", () => {
     chatInput.style.height = `${inputInitHeight}px`;
     chatInput.style.height = `${chatInput.scrollHeight}px`;
 });
-
 chatInput.addEventListener("keydown", (e) => {
     if(e.key === "Enter" && !e.shiftKey && window.innerWidth > 800) {
         e.preventDefault();
         handleChat();
     }
 });
-
 sendChatBtn.addEventListener("click", handleChat);
 closeBtn.addEventListener("click", () => document.body.classList.remove("show-chatbot"));
 chatbotToggler.addEventListener("click", () => document.body.classList.toggle("show-chatbot"));

@@ -1,16 +1,52 @@
 {
   "questions": [
-    { "question": "Who are you? Can you tell me a little bit about yourself?", "answer": "I am Pratham Chauhan, a Computer Science undergraduate at Thapar Institute. I have a strong foundation in software engineering and hands-on experience in both blockchain and cybersecurity projects. I'm proficient in C++ and Python and I am highly motivated to contribute to building scalable, secure, and high-performance software."},
-    { "question": "What are your technical skills? What programming languages do you code with? What technologies do you know?", "answer": "My primary programming languages are C, C++ with a focus on Object-Oriented Programming, and SQL. I also have practical experience with Python and its libraries like Scikit-learn and NLTK, and web frameworks like Flask. My core computer science knowledge includes Operating Systems (specifically Linux), Database Management Systems, Computer Networks, and Ethical Hacking."},
-    { "question": "What is your educational background? Where did you go to college?", "answer": "I am currently pursuing a Bachelor of Engineering in Computer Science at Thapar Institute of Engineering and Technology, from 2022 to 2026. My current CGPA is 7.15 out of 10."},
-    { "question": "Can you describe your work and internship experience?", "answer": "I have completed two internships. My first was a Blockchain Internship at TIET where I developed a secure logging prototype on the Solana network using Merkle trees. My second was a Cybersecurity Traineeship with Acmegrade, where I executed a simulated Man-in-the-Middle attack to validate browser defenses against HSTS Hijacking."},
-    { "question": "Could you elaborate on your blockchain internship at TIET?", "answer": "Certainly. During the 6-week ELC Summer Internship, my goal was to explore blockchain for log integrity. I built a prototype on the Solana network that used Merkle tree batching to process and verify over 500 Windows Event Logs. I also created a Streamlit interface for real-time verification, achieving results in under 5 seconds per batch.\n\nYou can find the complete, documented source code for this prototype on GitHub: https://github.com/chauhan-pratham/solana-secure-logging-prototype"},
-    { "question": "What were your responsibilities during the cybersecurity traineeship with Acmegrade?", "answer": "At Acmegrade, I was part of a team project to attempt HSTS Hijacking in a simulated MITM attack. I configured tools like Bettercap to intercept traffic and attempt to strip HTTPS. The project confirmed that modern HSTS policies successfully blocked these downgrade attempts. I also automated parts of the process with custom caplets and documented our findings in a technical report."},
-    { "question": "What projects have you built? Can you tell me about them?", "answer": "I have developed two key projects:\n\n1. SMS Spam Classifier: An NLP project that achieves ~95% accuracy. The source code is available on GitHub here: https://github.com/chauhan-pratham/SMS_Spam_Classifier\n\n2. ChatMinds: The Flask-based chatbot you're using right now. You can view the complete project on GitHub here: https://github.com/chauhan-pratham/Chat-Minds"},
-    { "question": "How does the SMS Spam Classifier project work? What model did you use?", "answer": "It's a natural language processing project. I built a pipeline that uses TF-IDF vectorization to convert text messages into numerical data. This data is then fed into a logistic regression model to classify messages. I used the NLTK library for preprocessing steps like tokenization and stemming to improve accuracy, which is approximately 95%.\n\nYou can find the complete source code for this project on my GitHub: https://github.com/chauhan-pratham/SMS_Spam_Classifier"},
-    { "question": "Tell me more about the ChatMinds chatbot project.", "answer": "This project, ChatMinds, was built with Python and the Flask framework following the full SDLC. My role included designing the UI and implementing the core logic using JSON files. You can find the complete source code on my GitHub: https://github.com/chauhan-pratham/Chat-Minds"},
-    { "question": "What are some of your biggest personal or professional achievements?", "answer": "One achievement I'm proud of is raising my CGPA from 4.77 to 7.15 through consistent effort, which demonstrates my discipline and time management. I am also a bronze medalist in a district-level Karate tournament, which reflects my commitment. Additionally, my active participation in school plays has helped me develop strong teamwork and public speaking skills."},
-    { "question": "Can you describe any of your leadership experiences?", "answer": "Yes. I led a 4-member team to organize and anchor an alumni meet for my high school, engaging over 100 attendees. I also serve as a Class In-charge for 'Pratigya Abhiyan,' where I manage a team of 30 volunteers to conduct educational activities for over 70 underprivileged children."},
-    { "question": "What certifications have you earned or completed?", "answer": "Yes, I have earned two certifications from AWS Academy. You can view all of my official credentials, including my AWS badges, on my portfolio website here: https://chauhan-pratham.github.io/Portfolio-Website/#certifications"}
+    {
+      "question": "Who are you? Can you tell me a little bit about yourself?",
+      "answer": "I am Pratham Chauhan, a Computer Science undergraduate with a strong foundation in software engineering and hands-on experience in blockchain and cybersecurity. You can learn more about my work on my <a href='https://github.com/chauhan-pratham' target='_blank'>GitHub</a> and connect with me on <a href='https://www.linkedin.com/in/chauhan-pratham/' target='_blank'>LinkedIn</a>."
+    },
+    {
+      "question": "What are your technical skills? What programming languages do you code with? What technologies do you know?",
+      "answer": "My primary programming languages are C, C++ with a focus on Object-Oriented Programming, and SQL. I also have practical experience with Python and its libraries like Scikit-learn and NLTK, and web frameworks like Flask. My core computer science knowledge includes Operating Systems (specifically Linux), Database Management Systems, Computer Networks, and Ethical Hacking."
+    },
+    {
+      "question": "What is your educational background? Where did you go to college?",
+      "answer": "I am currently pursuing a Bachelor of Engineering in Computer Science at Thapar Institute of Engineering and Technology, from 2022 to 2026. My current CGPA is 7.15 out of 10."
+    },
+    {
+      "question": "Can you describe your work and internship experience?",
+      "answer": "I have completed two key internships: a Blockchain Internship at TIET where I built a secure logging prototype on the Solana network, and a Cybersecurity Traineeship with Acmegrade where I executed a simulated Man-in-the-Middle attack to validate browser defenses."
+    },
+    {
+      "question": "Could you elaborate on your blockchain internship at TIET?",
+      "answer": "Certainly. During the 6-week ELC Summer Internship, my goal was to explore blockchain for log integrity. I built a prototype on the Solana network that used Merkle tree batching to process and verify over 500 Windows Event Logs. You can find the complete source code here: <a href='https://github.com/chauhan-pratham/solana-secure-logging-prototype' target='_blank'>GitHub Repository</a>"
+    },
+    {
+      "question": "What were your responsibilities during the cybersecurity traineeship with Acmegrade?",
+      "answer": "At Acmegrade, I was part of a team project to attempt HSTS Hijacking in a simulated MITM attack. I configured tools like Bettercap to intercept traffic and attempt to strip HTTPS. The project confirmed that modern HSTS policies successfully blocked these downgrade attempts. I also automated parts of the process with custom caplets and documented our findings in a technical report."
+    },
+    {
+      "question": "What projects have you built? Can you tell me about them?",
+      "answer": "I have developed two key projects:\n\n1. <b>SMS Spam Classifier:</b> An NLP project achieving ~95% accuracy. <a href='https://github.com/chauhan-pratham/SMS_Spam_Classifier' target='_blank'>View on GitHub</a>\n\n2. <b>ChatMinds:</b> The Flask-based chatbot you're using right now. <a href='https://github.com/chauhan-pratham/Chat-Minds' target='_blank'>View on GitHub</a>"
+    },
+    {
+      "question": "How does the SMS Spam Classifier project work? What model did you use?",
+      "answer": "It's an NLP project using a TF-IDF vectorizer and a logistic regression model. I used NLTK for preprocessing to improve accuracy to ~95%. You can find the complete source code here: <a href='https://github.com/chauhan-pratham/SMS_Spam_Classifier' target='_blank'>GitHub Repository</a>"
+    },
+    {
+      "question": "Tell me more about the ChatMinds chatbot project.",
+      "answer": "This project, ChatMinds, was built with Python and the Flask framework following the full SDLC. My role included designing the UI and implementing the core logic using JSON files. You can find the complete source code here: <a href='https://github.com/chauhan-pratham/Chat-Minds' target='_blank'>GitHub Repository</a>"
+    },
+    {
+      "question": "What are some of your biggest personal or professional achievements?",
+      "answer": "One achievement I'm proud of is raising my CGPA from 4.77 to 7.15 through consistent effort, which demonstrates my discipline and time management. I am also a bronze medalist in a district-level Karate tournament, which reflects my commitment. Additionally, my active participation in school plays has helped me develop strong teamwork and public speaking skills."
+    },
+    {
+      "question": "Can you describe any of your leadership experiences?",
+      "answer": "Yes. I led a 4-member team to organize and anchor an alumni meet for my high school, engaging over 100 attendees. I also serve as a Class In-charge for 'Pratigya Abhiyan,' where I manage a team of 30 volunteers to conduct educational activities for over 70 underprivileged children."
+    },
+    {
+      "question": "What certifications certify have you earned or completed?",
+      "answer": "Yes, I have earned two certifications from AWS Academy. You can view all of my official credentials on my portfolio website here: <a href='https://chauhan-pratham.github.io/Portfolio-Website/#certifications' target='_blank'>View Certifications</a>"
+    }
   ]
 }

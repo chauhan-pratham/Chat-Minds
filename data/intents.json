@@ -1,18 +1,6 @@
 {
   "intents": [
     {
-      "tag": "self_name",
-      "patterns": [
-        "pratham",
-        "pratham chauhan"
-      ],
-      "responses": [
-        "That's me! I'm a chatbot designed to answer questions about Pratham's resume. What would you like to know about his skills, projects, or experience?",
-        "You've come to the right place! I can tell you all about Pratham. Feel free to ask me anything about his professional background.",
-        "Yes, that's who I'm here to talk about. How can I help you learn more about Pratham?"
-      ]
-    },
-    {
       "tag": "greeting",
       "patterns": [
         "hello",
@@ -26,6 +14,17 @@
       "responses": [
         "Hello! I'm a chatbot designed to answer questions about Pratham Chauhan's resume. How can I help?",
         "Hi there! Ask me anything about Pratham's skills, projects, or experience."
+      ]
+    },
+    {
+      "tag": "self_name",
+      "patterns": [
+        "pratham",
+        "pratham chauhan"
+      ],
+      "responses": [
+        "That's me! I'm a chatbot designed to answer questions about Pratham's resume. What would you like to know about his skills, projects, or experience?",
+        "You've come to the right place! I can tell you all about Pratham. Feel free to ask me anything about his professional background."
       ]
     },
     {
@@ -61,7 +60,19 @@
         "are you a bot"
       ],
       "responses": [
-        "I am a chatbot created by Pratham Chauhan to help answer questions about his skills and experience. I am part of his ChatMinds project: https://github.com/chauhan-pratham/Chat-Minds"
+        "I am a chatbot created by Pratham Chauhan to answer questions about his skills and experience. I am part of his ChatMinds project, which you can view on <a href='https://github.com/chauhan-pratham/Chat-Minds' target='_blank'>GitHub</a>."
+      ]
+    },
+    {
+      "tag": "contact",
+      "patterns": [
+        "contact",
+        "email",
+        "phone",
+        "contact details"
+      ],
+      "responses": [
+        "You can contact Pratham directly via email at <a href='mailto:chauhanpratham812@gmail.com'>chauhanpratham812@gmail.com</a> or by phone at <a href='tel:+918837840132'>+91 8837840132</a>."
       ]
     },
     {
@@ -80,14 +91,15 @@
       "patterns": [
         "github",
         "linkedin",
-        "contact",
-        "github",
+        "portfolio",
         "profiles",
         "link to your work",
-        "repository"
+        "repository",
+        "resume",
+        "cv"
       ],
       "responses": [
-        "Of course. Here are the links to Pratham's key professional profiles:\n\n-<b>GitHub:</b> <a href='https://github.com/chauhan-pratham' target='_blank'>Link</a>\n- <b>LinkedIn:</b> <a href='https://www.linkedin.com/in/chauhan-pratham/' target='_blank'>Link</a>"
+        "Of course. Here are Pratham's key professional links:\n\n- <b>Resume:</b> <a href='https://chauhan-pratham.github.io/Portfolio-Website/#resume' target='_blank'>Link</a>\n- <b>Portfolio:</b> <a href='https://chauhan-pratham.github.io/Portfolio-Website/' target='_blank'>Link</a>\n- <b>GitHub:</b> <a href='https://github.com/chauhan-pratham' target='_blank'>Link</a>\n- <b>LinkedIn:</b> <a href='https://www.linkedin.com/in/chauhan-pratham/' target='_blank'>Link</a>"
       ]
     },
     {
