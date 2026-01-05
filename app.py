@@ -4,14 +4,15 @@ import random
 import os
 import re
 import numpy as np
-from sentence_transformers import SentenceTransformer, util
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
 
 app = Flask(__name__)
 
 # --- CONFIGURATION ---
 INTENTS_FILE = "data/intents.json"
 KNOWLEDGE_BASE_FILE = "data/questions.json"
-MODEL_NAME = 'all-MiniLM-L6-v2'
+
 
 # --- FILE LOADING ---
 def load_json_file(file_path):
@@ -32,10 +33,10 @@ intents_data = load_json_file(INTENTS_FILE)
 knowledge_base_data = load_json_file(KNOWLEDGE_BASE_FILE)
 
 
-# --- AI MODEL SETUP ---
-print("Loading AI Model (this may take a moment)...")
-model = SentenceTransformer(MODEL_NAME)
-print("Model Loaded.")
+# --- AI MODEL SETUP (TF-IDF Lightweight) ---
+print("Initializing TF-IDF Vectorizer...")
+vectorizer = TfidfVectorizer()
+print("Vectorizer Ready.")
 
 
 # --- PRE-COMPUTE EMBEDDINGS ---
@@ -50,10 +51,9 @@ if knowledge_base_data:
         kb_answers.append(qa.get("answer"))
 
     if kb_questions:
-        print(f"Encoding {len(kb_questions)} Knowledge Base questions...")
-        # convert_to_tensor=True allows for fast calculation on GPU or CPU
-        kb_embeddings = model.encode(kb_questions, convert_to_tensor=True)
-        print("Knowledge Base Encoded and Ready.")
+        print(f"Fitting TF-IDF on {len(kb_questions)} Knowledge Base questions...")
+        kb_embeddings = vectorizer.fit_transform(kb_questions)
+        print("Knowledge Base Vectorized and Ready.")
 
 
 # --- INTENT HANDLING (REGEX) ---
@@ -67,34 +67,33 @@ def handle_intent(intent_tag: str) -> str:
 
 
 # --- SEMANTIC SEARCH LOGIC ---
-def semantic_search(user_input, threshold=0.25):
+def semantic_search(user_input, threshold=0.15):
     """
-    Convert query to vector and find best match in Knowledge Base.
-    Threshold: 0.0 to 1.0 (Higher = stricter matching)
+    Convert query to vector and find best match in Knowledge Base using TF-IDF.
+    Threshold: Lower than embeddings because TF-IDF is sparse.
     """
     if kb_embeddings is None or len(kb_questions) == 0:
         return None
 
-    # Encode the user's query
-    query_embedding = model.encode(user_input, convert_to_tensor=True)
+    # Transform the user's query
+    query_vec = vectorizer.transform([user_input])
 
-    # Search for the closest vector in our KB
-    # top_k=1 means we only want the single best answer
-    hits = util.semantic_search(query_embedding, kb_embeddings, top_k=1)
+    # Calculate Cosine Similarity
+    # This returns an array [[similarity_1, similarity_2, ...]]
+    similarities = cosine_similarity(query_vec, kb_embeddings).flatten()
 
-    if hits and hits[0]:
-        best_hit = hits[0][0]
-        score = best_hit['score']
-        idx = best_hit['corpus_id']
+    # Find the best match
+    best_idx = np.argmax(similarities)
+    best_score = similarities[best_idx]
         
-        print(f"\n[AI DEBUG] Query: '{user_input}'")
-        print(f"[AI DEBUG] Match: '{kb_questions[idx]}'")
-        print(f"[AI DEBUG] Score: {score:.4f}")
+    print(f"\n[AI DEBUG] Query: '{user_input}'")
+    print(f"[AI DEBUG] Match: '{kb_questions[best_idx]}'")
+    print(f"[AI DEBUG] Score: {best_score:.4f}")
 
-        if score >= threshold:
-            return kb_answers[idx]
-        else:
-            print("[AI DEBUG] Score below threshold -> Ignoring match.")
+    if best_score >= threshold:
+        return kb_answers[best_idx]
+    else:
+        print("[AI DEBUG] Score below threshold -> Ignoring match.")
 
     return None
 
