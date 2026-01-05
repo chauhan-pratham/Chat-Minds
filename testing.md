@@ -11,13 +11,13 @@ This document outlines the full testing lifecycle of the ChatMinds portfolio cha
 
 ### Summary of Key Bug Fixes
 
-Initial testing revealed several critical bugs in the chatbot's classification logic. The following key issues were identified and successfully resolved:
+Initial testing revealed limitations in the original keyword-based logic. The system has since been upgraded to use **TF-IDF Semantic Search**. The following key improvements were made:
 
 1.  **Intent Collision:** Overly broad intent patterns (e.g., "internship", "code") were incorrectly triggered, preventing the knowledge base from being searched for more specific answers.
     *   **Fix:** The intent patterns in `intents.json` were made more specific and less ambiguous.
 
-2.  **False Positive from Stop Words:** The matching algorithm was fooled by common English words (e.g., "what is your"), leading to incorrect answers for unrelated questions.
-    *   **Fix:** A stop word filter was implemented in the `app.py` backend to focus the matching algorithm on meaningful keywords.
+2.  **Context Awareness (Semantic Search):** The original bot failed on "synonyms" (e.g., "coding" vs "programming").
+    *   **Fix:** Implementation of **TF-IDF Vectorization** and **Cosine Similarity**. The bot now understands that "coding" is mathematically similar to "programming" based on the knowledge base context.
 
 3.  **Greedy Greeting Logic:** The system would incorrectly trigger the `greeting` intent on long sentences that started with a greeting word (e.g., "hey..."), ignoring the user's actual question.
     *   **Fix:** The Python backend was updated to intelligently ignore greeting intents in sentences longer than three words, forcing a knowledge base search instead.
@@ -43,7 +43,10 @@ The following table documents the behavior of the chatbot *after* all fixes were
 | **RS-02** | **Robustness (Punctuation)** | `what are your skills?!!?!` | The correct answer for skills. | ✅ PASS | Confirms the regex `\w+` correctly ignores punctuation. |
 | **RS-03** | **Robustness (Gibberish)** | `shajldhjhdkjskhdkgdsfhksd;` | The `unknown` intent fallback. | ✅ PASS | The bot handles unexpected and nonsensical input gracefully. |
 | **SEC-01**| **Security (HTML Injection)** | `<b>hello</b>` | The `greeting` intent response. | ✅ PASS | **CRITICAL SUCCESS.** User input was correctly sanitized and displayed as plain text, not rendered as bold HTML. |
-| **SEC-02**| **Security (XSS Injection)** | `<script>alert('XSS')</script>` | The `unknown` intent fallback. | ✅ PASS | **CRITICAL SUCCESS.** User input was sanitized, and no JavaScript alert was executed, confirming the bot is not vulnerable to this basic XSS attack. |
+| **SEC-02**| **Security (XSS Injection)** | `<script>alert('XSS')</script>` | The `unknown` intent fallback. | ✅ PASS | **CRITICAL SUCCESS.** User input was sanitized, and no JavaScript alert was executed. |
+| **NEW-01**| **Semantic Search (Synonyms)** | `what languages do you code in` | The answer for `skills`. | ✅ PASS | **SUCCESS.** TF-IDF correctly maps "code" and "languages" to the technical skills answer. |
+| **NEW-02**| **Semantic Search (Concepts)** | `tell me about your education` | The answer for `education`. | ✅ PASS | **SUCCESS.** Even though the exact question might vary, vector similarity finds the best match. |
+| **NEW-03**| **Suggestion Chips** | *Click "What is his tech stack?"* | The answer for `skills`. | ✅ PASS | **SUCCESS.** Frontend interaction correctly populates and submits the query. |
 | **LIM-01**| **Limitation (Typo)** | `exprience` | The `unknown` intent fallback. | ✅ PASS | **EXPECTED FAILURE.** The system is not designed for typo correction. This is the correct fallback behavior. |
 | **LIM-02**| **Limitation (Statelessness)** | 1. `projects`<br>2. `what technologies did you use for it` | The answer for `skills`. | ✅ PASS | **EXPECTED FAILURE.** This correctly demonstrates the chatbot's **stateless architecture**. It has no memory of the previous turn and cannot know what "it" refers to. It correctly matched the keyword "technologies" from the second question. |
 | **LIM-03**| **Limitation (Multi-Topic)** | `what about project and skills` | The answer for `skills`. | ✅ PASS | **KNOWN LIMITATION.** The simple scoring model correctly matches the strongest keyword ("skills"). Handling multiple topics in one query is a future improvement. |

@@ -1,19 +1,19 @@
 # ChatMinds 🧠💬
 
-**ChatMinds** is an intelligent portfolio chatbot designed to showcase professional skills, projects, and experiences interactively. **Now improved with AI-powered Semantic Search**, it understands the *meaning* of user queries rather than just matching keywords, ensuring highly reliable and context-aware responses.
+**ChatMinds** is an intelligent portfolio chatbot designed to showcase professional skills, projects, and experiences interactively. **Now improved with Semantic Search**, it understands the context of user queries ensuring highly reliable responses.
 
 ## 🚀 Features
 
-*   **✨ Semantic Search (New):** Uses **Vector Embeddings** (`sentence-transformers`) to match user questions with the Knowledge Base by meaning, not just exact words.
+*   **✨ Semantic Search (Optimized):** Uses **TF-IDF Vectorization** (`scikit-learn`) to match user questions with the Knowledge Base by analyzing text similarity.
 *   **Intent Recognition:** accurately identifies user intent (e.g., greetings, goodbyes) using regex patterns for instant responses.
 *   **Smart Fallback:** If the AI is unsure (low confidence score), it gracefully admits it doesn't know rather than guessing.
 *   **Robust & Secure:** Handles edge cases like gibberish, mixed case, and punctuation. Includes basic security sanitization.
-*   **Efficiency:** Uses the lightweight `all-MiniLM-L6-v2` model, optimized for fast CPU performance.
+*   **Efficiency:** Extremely lightweight and fast, fully compatible with free tier serverless deployment (Vercel).
 
 ## 🛠️ Tech Stack
 
 *   **Backend:** Python 3, Flask
-*   **AI/NLP:** Sentence-Transformers (Hugging Face), NumPy
+*   **AI/NLP:** Scikit-learn (TF-IDF), NumPy
 *   **Frontend:** HTML5, CSS3, JavaScript (Chat Interface)
 *   **Data:** JSON (`intents.json`, `questions.json`)
 *   **Deployment:** Configured for Vercel
@@ -54,7 +54,7 @@ Chat-Minds/
     ```bash
     pip install -r requirements.txt
     ```
-    *Note: The first time you run the app, it will download the AI model (~80MB). This is normal.*
+    *Note: The app is now optimized for instant startup.*
 
 ## 🏃 Usage
 
@@ -76,7 +76,7 @@ The logic has been upgraded to use **Cosine Similarity**.
 ## ☁️ Deployment
 
 This project includes a `vercel.json` configuration file.
-**Important:** When deploying to serverless platforms (like Vercel), ensure the instance has enough memory to load the `sentence-transformers` model, or consider pre-downloading the model.
+**Optimized:** The transition to TF-IDF ensures this project stays well within the 250MB limit of Vercel's free tier.
 
 ---
 *Generated for ChatMinds Project*
