@@ -3,30 +3,15 @@ import json
 import random
 import os
 import re
-
-# --- NLTK SETUP ---
-import nltk
-from nltk.corpus import stopwords, wordnet
-from nltk.tokenize import word_tokenize
-from nltk.stem import WordNetLemmatizer
-
-# Force NLTK to look inside bundled nltk_data folder
-NLTK_PATH = os.path.join(os.path.dirname(__file__), "nltk_data")
-nltk.data.path.append(NLTK_PATH)
+import numpy as np
+from sentence_transformers import SentenceTransformer, util
 
 app = Flask(__name__)
 
 # --- CONFIGURATION ---
 INTENTS_FILE = "data/intents.json"
 KNOWLEDGE_BASE_FILE = "data/questions.json"
-
-lemmatizer = WordNetLemmatizer()
-
-try:
-    STOP_WORDS = set(stopwords.words("english"))
-except LookupError:
-    print("[FATAL] NLTK stopwords not found. Please run `download_nltk.py` locally before deploying.")
-    STOP_WORDS = set()
+MODEL_NAME = 'all-MiniLM-L6-v2'
 
 # --- FILE LOADING ---
 def load_json_file(file_path):
@@ -47,29 +32,31 @@ intents_data = load_json_file(INTENTS_FILE)
 knowledge_base_data = load_json_file(KNOWLEDGE_BASE_FILE)
 
 
-# --- PREPROCESSING ---
-def preprocess(text: str):
-    """Tokenize, lowercase, remove stopwords, and lemmatize."""
-    tokens = word_tokenize(text.lower())
-    filtered = [
-        lemmatizer.lemmatize(tok)
-        for tok in tokens
-        if tok.isalnum() and tok not in STOP_WORDS
-    ]
-    return set(filtered)
+# --- AI MODEL SETUP ---
+print("Loading AI Model (this may take a moment)...")
+model = SentenceTransformer(MODEL_NAME)
+print("Model Loaded.")
 
 
-def expand_with_wordnet(word):
-    """Expand a word with its synonyms and lemma forms from WordNet."""
-    synonyms = set([word])
-    for syn in wordnet.synsets(word):
-        for lemma in syn.lemmas():
-            normalized = lemmatizer.lemmatize(lemma.name().lower())
-            synonyms.add(normalized)
-    return synonyms
+# --- PRE-COMPUTE EMBEDDINGS ---
+# We encode all questions once at startup to make the chat instant
+kb_questions = []
+kb_answers = []
+kb_embeddings = None
+
+if knowledge_base_data:
+    for qa in knowledge_base_data.get("questions", []):
+        kb_questions.append(qa.get("question"))
+        kb_answers.append(qa.get("answer"))
+
+    if kb_questions:
+        print(f"Encoding {len(kb_questions)} Knowledge Base questions...")
+        # convert_to_tensor=True allows for fast calculation on GPU or CPU
+        kb_embeddings = model.encode(kb_questions, convert_to_tensor=True)
+        print("Knowledge Base Encoded and Ready.")
 
 
-# --- INTENT HANDLING ---
+# --- INTENT HANDLING (REGEX) ---
 def handle_intent(intent_tag: str) -> str:
     if not intents_data:
         return "Error: Intents file not loaded."
@@ -79,63 +66,87 @@ def handle_intent(intent_tag: str) -> str:
     return "Intent tag not found."
 
 
-# --- KNOWLEDGE BASE MATCHING ---
-def search_kb(user_input, kb_data):
-    """Search knowledge base for the best matching Q&A."""
-    user_tokens = preprocess(user_input)
+# --- SEMANTIC SEARCH LOGIC ---
+def semantic_search(user_input, threshold=0.25):
+    """
+    Convert query to vector and find best match in Knowledge Base.
+    Threshold: 0.0 to 1.0 (Higher = stricter matching)
+    """
+    if kb_embeddings is None or len(kb_questions) == 0:
+        return None
 
-    expanded_user_tokens = set()
-    for token in user_tokens:
-        expanded_user_tokens |= expand_with_wordnet(token)
+    # Encode the user's query
+    query_embedding = model.encode(user_input, convert_to_tensor=True)
 
-    best_match = None
-    best_score = 0
+    # Search for the closest vector in our KB
+    # top_k=1 means we only want the single best answer
+    hits = util.semantic_search(query_embedding, kb_embeddings, top_k=1)
 
-    print(f"\n[DEBUG] Searching KB for words: {expanded_user_tokens}")
+    if hits and hits[0]:
+        best_hit = hits[0][0]
+        score = best_hit['score']
+        idx = best_hit['corpus_id']
+        
+        print(f"\n[AI DEBUG] Query: '{user_input}'")
+        print(f"[AI DEBUG] Match: '{kb_questions[idx]}'")
+        print(f"[AI DEBUG] Score: {score:.4f}")
 
-    for qa in kb_data.get("questions", []):
-        kb_question = qa.get("question", "")
-        kb_tokens = preprocess(kb_question)
+        if score >= threshold:
+            return kb_answers[idx]
+        else:
+            print("[AI DEBUG] Score below threshold -> Ignoring match.")
 
-        score = len(expanded_user_tokens & kb_tokens)
-
-        print(f"[DEBUG] Comparing with: '{kb_question[:50]}...' | Score: {score}")
-
-        if score > best_score:
-            best_score = score
-            best_match = qa
-
-    print(f"[DEBUG] Highest KB score: {best_score}")
-    return best_match if best_score > 0 else None
+    return None
 
 
 # --- MAIN CLASSIFICATION LOGIC ---
 def classify_and_respond(user_input: str) -> str:
     print(f"\n--- New Request: '{user_input}' ---")
 
+    # 1. CHECK INTENTS (Regular Expressions)
+    # Good for simple greetings, goodbyes, or specific commands
     matched_intent = None
-
     if intents_data:
         for intent in intents_data.get("intents", []):
             for pattern in intent.get("patterns", []):
+                # Word boundaries \b ensure we don't match partial words
                 if re.search(r"\b" + re.escape(pattern.lower()) + r"\b", user_input.lower()):
                     matched_intent = intent
                     break
             if matched_intent:
                 break
+    
+    # If it's a greeting or a simple name mention but the sentence is long, 
+    # it's likely a real question (e.g., "Hi, what is python?" or "Tech stack of Pratham")
+    # So we skip these generic intents and let the AI handle it.
+    
+    ignore_match = False
+    if matched_intent:
+        word_count = len(user_input.split())
+        if matched_intent["tag"] == "greeting" and word_count > 4:
+            ignore_match = True
+        elif matched_intent["tag"] == "self_name" and word_count > 3:
+            ignore_match = True
 
-    if matched_intent and matched_intent["tag"] == "greeting" and len(user_input.split()) > 3:
-        print("[INFO] Greeting intent matched but input is long → ignoring intent.")
-    elif matched_intent:
-        print(f"[INFO] Matched intent '{matched_intent['tag']}' with pattern. Responding.")
+    if ignore_match:
+        print(f"[INFO] Complex input detected for '{matched_intent['tag']}'. Checking Knowledge Base instead.")
+        matched_intent = None
+
+    if matched_intent:
+        print(f"[INFO] Matched intent '{matched_intent['tag']}' via Regex.")
         return handle_intent(matched_intent["tag"])
 
-    print("[INFO] No decisive intent, searching KB...")
-    kb_match = search_kb(user_input, knowledge_base_data)
-    if kb_match:
-        return kb_match.get("answer", "I found something relevant, but no answer text provided.")
 
-    print("[INFO] No match → fallback to 'unknown' intent.")
+    # 2. SEMANTIC SEARCH (AI)
+    # If no simple intent matched, use the brain
+    print("[INFO] searching Knowledge Base via Semantic Search...")
+    ai_answer = semantic_search(user_input)
+    if ai_answer:
+        return ai_answer
+
+
+    # 3. FALLBACK
+    print("[INFO] No match found. Returning 'unknown' intent.")
     return handle_intent("unknown")
 
 
@@ -156,4 +167,6 @@ def chat():
 if __name__ == "__main__":
     if not intents_data or not knowledge_base_data:
         print("\n--- APPLICATION WILL NOT RUN CORRECTLY DUE TO FILE LOADING ERRORS. ---")
+    
+    # Run Flask
     app.run(debug=True)

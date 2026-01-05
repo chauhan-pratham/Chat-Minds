@@ -9,7 +9,7 @@
       "answer": "Pratham Chauhan is a Computer Science undergraduate with a strong foundation in software engineering and hands-on experience in blockchain and cybersecurity. You can learn more about his work on his <a href='https://github.com/chauhan-pratham' target='_blank'>GitHub</a> and connect with him on <a href='https://www.linkedin.com/in/chauhan-pratham/' target='_blank'>LinkedIn</a>."
     },
     {
-      "question": "What are Pratham's technical skills? What programming languages does he know?",
+      "question": "What is Pratham's tech stack? What are Pratham's technical skills? What programming languages does he know? Does he know hacking or cybersecurity?",
       "answer": "Pratham's primary programming languages are C, C++ with a focus on Object-Oriented Programming, and SQL. He also has practical experience with Python and its libraries like Scikit-learn and NLTK, and web frameworks like Flask. His core computer science knowledge includes Operating Systems (specifically Linux), Database Management Systems, Computer Networks, and Ethical Hacking."
     },
     {
@@ -21,7 +21,7 @@
       "answer": "Pratham has completed two key internships: a Blockchain Internship at TIET where he built a secure logging prototype on the Solana network, and a Cybersecurity Traineeship with Acmegrade where he executed a simulated Man-in-the-Middle attack to validate browser defenses."
     },
     {
-      "question": "Could you elaborate on Pratham's blockchain internship at TIET?",
+      "question": "Could you elaborate on Pratham's blockchain internship at TIET? What did he do with Solana?",
       "answer": "During the 6-week ELC Summer Internship, Pratham's goal was to explore blockchain for log integrity. He built a prototype on the Solana network that used Merkle tree batching to process and verify over 500 Windows Event Logs. The complete source code is available here: <a href='https://github.com/chauhan-pratham/solana-secure-logging-prototype' target='_blank'>GitHub Repository</a>"
     },
     {

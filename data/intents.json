@@ -19,8 +19,7 @@
     {
       "tag": "self_name",
       "patterns": [
-        "pratham",
-        "pratham chauhan"
+        "chatminds"
       ],
       "responses": [
         "That's me! I'm a chatbot designed to answer questions about Pratham's resume. What would you like to know about his skills, projects, or experience?",
